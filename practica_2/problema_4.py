@@ -1,44 +1,45 @@
 """
 Problema 4
+Calcula la exactitud de un clasificador k-NN
+con k-fold cross validation (5 pliegues)
+para k = 1, 2, 3, 4, ..., 10 del clasificador.
 """
 import matplotlib.pyplot as plt
 import numpy as np
 
 from glob import glob
 from sklearn import svm
+from random import random
 from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
+from sklearn.neighbors import KNeighborsClassifier
 
 
-# Import IRIS data set
+
+# Import datos misteriosos
 files = glob("*.txt")
-d_misteriosos = np.load(files[0])
+with open(files[0], "r") as f:
+    data = [
+        register.split()[1:]
+        for register
+        in f.readlines()
+    ]
 
-x = iris.data
-y = iris.target
-features = iris.feature_names
-n_features = len(features)
-
-# Plot pairs of variables
-plt.scatter(x[:,1], x[:,2], c = y, cmap=plt.cm.Set1, edgecolor='k')
-plt.xlabel(features[1])
-plt.ylabel(features[2])
-plt.show()
-
-# Train SVM classifier with all the available observations
-clf = svm.SVC(kernel = 'linear')
-clf.fit(x, y)
+print(len(data))
+# Train KNN classifier with all the available observations
+sample_size = 3*len(data)//4
+x = data[sample_size:]
+y = data[:sample_size]
+clf = KNeighborsClassifier(n_neighbors=5)
+clf.fit(x,y)
 
 # Predict one new sample
-print("Prediction for a new observation", clf.predict( [[1.,2.,3.,4.]] ))
+# print("Prediction for a new observation", clf.predict( [[random() * 2 for _ in range(len(data[0]))]] ))
 
 # 5-fold cross-validation
 kf = KFold(n_splits=5, shuffle = True)
-clf = svm.SVC(kernel = 'linear')
-
 acc = 0
 for train_index, test_index in kf.split(x):
-
     # Training phase
     x_train = x[train_index, :]
     y_train = y[train_index]
@@ -51,7 +52,7 @@ for train_index, test_index in kf.split(x):
 
     # Calculate confusion matrix and model performance
     cm = confusion_matrix(y_test, y_pred)
-    acc_i = (cm[0,0]+cm[1,1]+cm[2,2])/len(y_test)    
+    acc_i = (sum(cm[i,i] for i in range(len(cm))))/len(y_test)    
     print('acc = ', acc_i)
 
     acc += acc_i 
