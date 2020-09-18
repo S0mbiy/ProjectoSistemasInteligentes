@@ -1,6 +1,7 @@
 #------------------------------------------------------------------------------------------------------------------
 import numpy as np
 
+from glob import glob
 from sklearn import datasets
 from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
@@ -9,16 +10,15 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import np_utils
 
-# Import IRIS data set
-iris = datasets.load_iris()
-x = iris.data
-y = iris.target
+# Import Datos misteriosos data set
+files = glob("../practica_2/*.txt")
+with open(files[0], "r") as f:
+    data = [
+        register.split()[1:]
+        for register
+        in f.readlines()
+    ]
 
-targets = iris.target_names
-n_clases = len(targets)
-
-features = iris.feature_names
-n_features = len(features)
 
 # Create output variables from original labels
 output_y = np_utils.to_categorical(y)   # This is only required in 
