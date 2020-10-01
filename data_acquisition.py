@@ -26,7 +26,6 @@ start_time = time.time()
 #Plot
 fig, axs = plt.subplots(2,2)
 fig.suptitle('Pairs of variables')
-plt.show()
 
 ps = 0
 while True:
@@ -81,5 +80,5 @@ while True:
     except socket.timeout:
         pass
 
-    
+plt.show()
 
